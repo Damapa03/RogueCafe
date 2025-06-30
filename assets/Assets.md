@@ -1,0 +1,1 @@
+Directorio donde se alojaran los assets del juego
