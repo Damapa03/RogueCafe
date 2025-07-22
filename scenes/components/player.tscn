@@ -172,6 +172,10 @@ one_shot = true
 [node name="AttackState" type="Node" parent="PlayerStateMachine"]
 script = ExtResource("7_smehm")
 
+[node name="AttackCooldownTimer" type="Timer" parent="PlayerStateMachine/AttackState"]
+wait_time = 0.5
+one_shot = true
+
 [node name="Weapon" type="Sprite2D" parent="."]
 position = Vector2(106, 0)
 rotation = 0.93026
