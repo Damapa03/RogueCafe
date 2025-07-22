@@ -1,0 +1,192 @@
+[gd_scene load_steps=15 format=3 uid="uid://bufesng3wogil"]
+
+[ext_resource type="Texture2D" uid="uid://jwaawb4v6vil" path="res://icon.svg" id="1_3vyb7"]
+[ext_resource type="Script" uid="uid://tl25mn0ok7ti" path="res://scripts/player.gd" id="1_g2els"]
+[ext_resource type="Script" uid="uid://rjibv6tlxeox" path="res://scripts/player_state_machine/player_state_machine.gd" id="3_qhqgy"]
+[ext_resource type="Script" uid="uid://bwcg54ofmx3xd" path="res://scripts/player_state_machine/idle_state.gd" id="4_dqkch"]
+[ext_resource type="Script" uid="uid://eeqwkd3ttygn" path="res://scripts/player_state_machine/walk_state.gd" id="5_qlg0r"]
+[ext_resource type="Script" uid="uid://cw82mxsf83twd" path="res://scripts/player_state_machine/dash_state.gd" id="6_fjrip"]
+[ext_resource type="Script" uid="uid://cdgac4byn85ut" path="res://scripts/player_state_machine/attack_state.gd" id="7_smehm"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g2els"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_3vyb7")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3vyb7"]
+size = Vector2(122, 122)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ypwcc"]
+size = Vector2(86, 290)
+
+[sub_resource type="Animation" id="Animation_2l1sc"]
+resource_name = "attack_animation"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Weapon:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(95, 53), Vector2(99, -51)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Weapon:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.93026, -1.24093]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Weapon/Area2D:monitoring")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.0488226, 0.174677),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+
+[sub_resource type="Animation" id="Animation_fgeo0"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Weapon:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(106, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Weapon:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.93026]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Weapon/Area2D:monitoring")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_ypwcc"]
+resource_name = "idle_animation"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Weapon:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(106, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Weapon:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lkd77"]
+_data = {
+&"RESET": SubResource("Animation_fgeo0"),
+&"attack_animation": SubResource("Animation_2l1sc"),
+&"idle_animation": SubResource("Animation_ypwcc")
+}
+
+[node name="Player" type="CharacterBody2D"]
+motion_mode = 1
+script = ExtResource("1_g2els")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_g2els")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="PlayerCollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_3vyb7")
+
+[node name="PlayerStateMachine" type="Node" parent="."]
+script = ExtResource("3_qhqgy")
+
+[node name="IdleState" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("4_dqkch")
+
+[node name="WalkState" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("5_qlg0r")
+
+[node name="DashState" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("6_fjrip")
+
+[node name="DashDurationTimer" type="Timer" parent="PlayerStateMachine/DashState"]
+wait_time = 0.3
+one_shot = true
+
+[node name="DashCooldownTimer" type="Timer" parent="PlayerStateMachine/DashState"]
+one_shot = true
+
+[node name="AttackState" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("7_smehm")
+
+[node name="Weapon" type="Sprite2D" parent="."]
+position = Vector2(106, 0)
+rotation = 0.93026
+scale = Vector2(1, 0.3)
+texture = ExtResource("1_3vyb7")
+
+[node name="Area2D" type="Area2D" parent="Weapon"]
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Weapon/Area2D"]
+position = Vector2(23, 5)
+shape = SubResource("RectangleShape2D_ypwcc")
+
+[node name="PlayerAnimation" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_lkd77")
+}
+autoplay = "idle_animation"
