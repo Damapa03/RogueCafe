@@ -1,7 +1,4 @@
 extends State
-@onready var player: CharacterBody2D = $"../.."
-@onready var dash_duration_timer: Timer = $DashDurationTimer
-@onready var dash_cooldown_timer: Timer = $DashCooldownTimer
 
 @export var _dash_speed: float = 800
 @export var _dash_duration: float = 0.3
@@ -9,30 +6,51 @@ extends State
 
 var _dash_direction: Vector2
 
+@onready var player: CharacterBody2D = $"../.."
+@onready var dash_duration_timer: Timer = $DashDurationTimer
+@onready var dash_cooldown_timer: Timer = $DashCooldownTimer
+
+func _ready() -> void:
+	dash_duration_timer.timeout.connect(_change_back_state)
+
 
 func enter() -> void:
-	_dash_direction = Vector2(Input.get_axis("move_left", "move_right"), Input.get_axis("move_up", "move_down"))
-	if dash_cooldown_timer.time_left > 0 and _dash_direction:
-		change_state.emit("WalkState")
-	elif dash_cooldown_timer.time_left > 0:
-		change_state.emit("IdleState")
+	if !_player_can_dash():
+		_change_back_state()
+		return
 	
-	dash_duration_timer.wait_time = _dash_duration
-	dash_duration_timer.start()
+	_dash_direction = Vector2(Input.get_axis("move_left", "move_right"), Input.get_axis("move_up", "move_down"))
+	_setup_timer(dash_duration_timer, _dash_duration)
 
 
-func exit() -> void:
-	if dash_cooldown_timer.time_left == 0:
-		dash_cooldown_timer.wait_time = _dash_cooldown
-		dash_cooldown_timer.start()
+func exit() -> void: 
+	if _player_dashed():
+		_setup_timer(dash_cooldown_timer, _dash_cooldown)
 
 
 func update() -> void:
-	if dash_duration_timer.time_left == 0:
-		change_state.emit("WalkState")
+	pass
 
 
 func update_physics() -> void:
-	player.velocity.x = _dash_direction.x * _dash_speed
-	player.velocity.y = _dash_direction.y * _dash_speed
-	player.move_and_slide()
+	player.velocity = _dash_direction * _dash_speed
+
+
+func _player_can_dash() -> bool:
+	return dash_cooldown_timer.is_stopped()
+
+
+func _player_dashed() -> bool:
+	return dash_duration_timer.is_stopped() and dash_cooldown_timer.is_stopped()
+
+
+func _setup_timer(timer: Timer, wait_time: float) -> void:
+	timer.wait_time = wait_time
+	timer.start()
+
+
+func _change_back_state() -> void:
+	if Vector2(Input.get_axis("move_left", "move_right"), Input.get_axis("move_up", "move_down")) == Vector2.ZERO:
+		change_state.emit("IdleState")
+	else:
+		change_state.emit("WalkState")
