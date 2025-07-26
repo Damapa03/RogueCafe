@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://tmmqrxdawrsh"
-path="res://.godot/imported/Sprite-0001.png-301f2c522e57282b7df856433eb0ee72.ctex"
+uid="uid://5e1g5mr5br7i"
+path="res://.godot/imported/Segundo Intento.png-562c0f51a8569566a2262ac52125c7ee.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Sprite-0001.png"
-dest_files=["res://.godot/imported/Sprite-0001.png-301f2c522e57282b7df856433eb0ee72.ctex"]
+source_file="res://assets/Segundo Intento.png"
+dest_files=["res://.godot/imported/Segundo Intento.png-562c0f51a8569566a2262ac52125c7ee.ctex"]
 
 [params]
 
