@@ -7,10 +7,10 @@ var _active_state: State
 func _ready() -> void:
 	for child in get_children():
 		if child is State:
-			_player_states[child.name] = child
+			_player_states[child.name.to_lower()] = child
 			child.change_state.connect(_change_player_state)
-	print(_player_states)
-	_active_state = _player_states["IdleState"]
+			child.player = get_parent()
+	_active_state = _player_states["IdleState".to_lower()]
 
 
 func _process(delta: float) -> void:
@@ -22,7 +22,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _change_player_state(new_state_name: String) -> void:
-	var new_state: State = _player_states.get(new_state_name)
+	var new_state: State = _player_states.get(new_state_name.to_lower())
 	if new_state == null:
 		print("El estado del Player: " + new_state_name + " no existe")
 		return
@@ -33,4 +33,3 @@ func _change_player_state(new_state_name: String) -> void:
 	_active_state.exit()
 	_active_state = new_state
 	_active_state.enter()
-	print(_active_state)

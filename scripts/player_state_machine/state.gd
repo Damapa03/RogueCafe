@@ -2,6 +2,7 @@ class_name State
 extends Node
 
 signal change_state(new_state: State)
+var player: Player
 
 func enter() -> void:
 	pass
